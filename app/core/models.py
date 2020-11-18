@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                        PermissionsMixin
+from django.conf import settings
 
 
 class UserManager(BaseUserManager):
@@ -35,3 +36,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+
+class Organization(models.Model):
+    """Organization that will be able to create projects"""
+    name = models.CharField(max_length=255, unique=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    description = models.TextField(blank=True)
+    web = models.URLField(max_length=255, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    country = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
