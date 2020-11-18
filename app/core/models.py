@@ -46,9 +46,24 @@ class Organization(models.Model):
         on_delete=models.CASCADE,
     )
     description = models.TextField(blank=True)
-    web = models.URLField(max_length=255, blank=True)
+    website = models.URLField(max_length=255, blank=True)
     address = models.CharField(max_length=255, blank=True)
     country = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class CooperatorProfile(models.Model):
+    """Profile of a cooperator"""
+    name = models.CharField(max_length=255)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    description = models.TextField()
+    skills = models.TextField(blank=True)
+    website = models.URLField(max_length=255, blank=True)
 
     def __str__(self):
         return self.name

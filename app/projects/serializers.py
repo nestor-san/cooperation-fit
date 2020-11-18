@@ -8,5 +8,5 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'description', 'web', 'address', 'country')
+        fields = ('id', 'name', 'description', 'website', 'address', 'country')
         ready_only_fields = ('id',)
