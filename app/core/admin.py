@@ -27,3 +27,4 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Organization)
 admin.site.register(models.CooperatorProfile)
+admin.site.register(models.Project)

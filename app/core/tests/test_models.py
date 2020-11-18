@@ -56,7 +56,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(organization), organization.name)
 
     def test_cooperator_profile_str(self):
-        """Test the cooperator string represntation"""
+        """Test the cooperator string representation"""
         cooperator_pr = models.CooperatorProfile.objects.create(
             user=sample_user(),
             name='Pablo',
@@ -65,3 +65,18 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(cooperator_pr), cooperator_pr.name)
+
+    def test_projects_str(self):
+        """Test the project string representation"""
+        self.user = sample_user()
+        self.organization = models.Organization.objects.create(
+            user=self.user, name='Sample Ngo', country='Spain')
+
+        project = models.Project.objects.create(
+            user=self.user,
+            name='Test project',
+            organization=self.organization,
+            description='Project description'
+        )
+
+        self.assertEqual(str(project), project.name)
