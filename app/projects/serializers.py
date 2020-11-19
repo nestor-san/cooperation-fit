@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Organization, CooperatorProfile
+from core.models import Organization, CooperatorProfile, Project
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -19,3 +19,13 @@ class CooperatorProfileSerializer(serializers.ModelSerializer):
         model = CooperatorProfile
         fields = ('id', 'name', 'description', 'skills', 'website')
         ready_only_fields = ('id',)
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    """Serializer for Project objects"""
+
+    class Meta:
+        model = Project
+        fields = ('id', 'name', 'user', 'organization',
+                  'description', 'ref_link')
+        ready_only_fields = ('id', 'user', 'organization')

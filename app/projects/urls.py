@@ -7,6 +7,7 @@ from projects import views
 router = DefaultRouter()
 router.register('organization', views.OrganizationViewSet)
 router.register('cooperators', views.CooperatorProfileViewSet)
+router.register('projects', views.ProjectViewSet)
 
 app_name = 'projects'
 

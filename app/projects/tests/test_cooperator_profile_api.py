@@ -59,3 +59,22 @@ class PrivateCooperatorApiTests(TestCase):
         serializer = CooperatorProfileSerializer(cooperators, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+    def test_create_cooperator_profile_successful(self):
+        """Test creating a new cooperator profile"""
+        payload = {'name': 'Nestor', 'description': """
+                    I'm a super web designer."""}
+        self.client.post(COOPERATOR_PROFILE_URL, payload)
+
+        exists = CooperatorProfile.objects.filter(
+            user=self.user,
+            name=payload['name']
+        ).exists()
+        self.assertTrue(exists)
+
+    def test_create_cooperator_profile_invalid(self):
+        """Create a new coopeartor with invalid payload"""
+        payload = {'name': '', 'description': 'A supernob man.'}
+        res = self.client.post(COOPERATOR_PROFILE_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
