@@ -69,6 +69,20 @@ class CooperatorProfile(models.Model):
         return self.name
 
 
+class PortfolioItem(models.Model):
+    """Portfolio items of a cooperator"""
+    cooperator = models.ForeignKey(
+        CooperatorProfile,
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    link = models.URLField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Project(models.Model):
     """Cooperation project"""
     name = models.CharField(max_length=255)

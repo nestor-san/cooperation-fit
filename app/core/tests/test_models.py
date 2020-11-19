@@ -66,6 +66,23 @@ class ModelTests(TestCase):
 
         self.assertEqual(str(cooperator_pr), cooperator_pr.name)
 
+    def test_portfolio_item_str(self):
+        """Test the portfolio item string representation"""
+        cooperator = models.CooperatorProfile.objects.create(
+            user=sample_user(),
+            name='Pablo',
+            description='I\'m a super web designer.',
+            skills='Web design'
+        )
+        portfolio_item = models.PortfolioItem.objects.create(
+            cooperator=cooperator,
+            name='Portfolio item 1',
+            description='A short description about the project',
+            link='http://xemob.com'
+        )
+
+        self.assertEqual(str(portfolio_item), portfolio_item.name)
+
     def test_projects_str(self):
         """Test the project string representation"""
         self.user = sample_user()
