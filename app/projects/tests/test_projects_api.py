@@ -52,25 +52,23 @@ class PrivateProjectsApiTests(TestCase):
             'test@xemob.com',
             'password123'
         )
+        self.client = APIClient()
+        self.client.force_authenticate(self.user)
         self.ngo = Organization.objects.create(user=self.user,
                                                name='NGO-1',
                                                country='Spain')
-        self.client = APIClient()
-        self.client.force_authenticate(self.user)
 
     def test_create_project_successful(self):
         """Test creating a new project"""
-        ngo = Organization.objects.create(user=self.user,
-                                          name='NGO-inside',
-                                          country='Spain')
-        payload = {'name': 'Test project', 'organization': ngo}
+        payload = {'name': 'Test project',
+                   'organization': self.ngo.id,
+                   'user': self.user.id}
         self.client.post(PROJECT_URL, payload)
 
-        Project.objects.create(user=self.user,
-                               name='Project 1',
-                               organization=ngo)
-
-        exists = Project.objects.filter().exists()
+        exists = Project.objects.filter(
+            user=self.user,
+            name=payload['name']
+        ).exists()
         self.assertTrue(exists)
 
     def test_create_project_invalid(self):

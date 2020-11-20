@@ -68,17 +68,9 @@ class ModelTests(TestCase):
 
     def test_portfolio_item_str(self):
         """Test the portfolio item string representation"""
-        cooperator = models.CooperatorProfile.objects.create(
-            user=sample_user(),
-            name='Pablo',
-            description='I\'m a super web designer.',
-            skills='Web design'
-        )
         portfolio_item = models.PortfolioItem.objects.create(
-            cooperator=cooperator,
-            name='Portfolio item 1',
-            description='A short description about the project',
-            link='http://xemob.com'
+            user=sample_user(),
+            name='Portfolio item 1'
         )
 
         self.assertEqual(str(portfolio_item), portfolio_item.name)

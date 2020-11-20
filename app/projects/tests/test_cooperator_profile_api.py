@@ -62,8 +62,9 @@ class PrivateCooperatorApiTests(TestCase):
 
     def test_create_cooperator_profile_successful(self):
         """Test creating a new cooperator profile"""
-        payload = {'name': 'Nestor', 'description': """
-                    I'm a super web designer."""}
+        payload = {'user': self.user.id,
+                   'name': 'Nestor',
+                   'description': "I'm a super web designer."}
         self.client.post(COOPERATOR_PROFILE_URL, payload)
 
         exists = CooperatorProfile.objects.filter(

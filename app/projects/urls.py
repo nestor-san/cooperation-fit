@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register('organization', views.OrganizationViewSet)
 router.register('cooperators', views.CooperatorProfileViewSet)
 router.register('projects', views.ProjectViewSet)
+router.register('portfolio', views.PortfolioItemViewSet)
 
 app_name = 'projects'
 
