@@ -122,6 +122,7 @@ class Cooperation(models.Model):
         )
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField(null=True)
+    is_private = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
