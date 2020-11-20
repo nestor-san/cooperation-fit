@@ -100,3 +100,28 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Cooperation(models.Model):
+    """Actual cooperation between an organization and a volunteer"""
+    name = models.CharField(max_length=255)
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE)
+    org_worker = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='org_worker'
+        )
+    voluntary = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='voluntary'
+        )
+    start_date = models.DateField(auto_now_add=True)
+    end_date = models.DateField(null=True)
+
+    def __str__(self):
+        return self.name

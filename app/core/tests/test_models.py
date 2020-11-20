@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
@@ -89,3 +91,28 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(project), project.name)
+
+    def test_cooperation_str(self):
+        """Test the cooperation string representation"""
+        self.user = sample_user()
+        self.user2 = sample_user(email='other@xemob.com')
+        self.organization = models.Organization.objects.create(
+            user=self.user, name='Sample Ngo', country='Spain')
+        self.project = models.Project.objects.create(
+            user=self.user,
+            name='Test project',
+            organization=self.organization,
+            description='Project description'
+        )
+        self.cooperation_name = f"""
+        Cooperation between {self.user.name} and {self.user2.name},
+        for the project {self.project.name}"""
+        cooperation = models.Cooperation.objects.create(
+            name=self.cooperation_name[:255],
+            project=self.project,
+            org_worker=self.user,
+            voluntary=self.user2,
+            start_date=datetime.now()
+        )
+
+        self.assertEqual(str(cooperation), cooperation.name)
