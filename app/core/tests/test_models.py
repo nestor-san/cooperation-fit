@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
@@ -111,8 +109,7 @@ class ModelTests(TestCase):
             name=self.cooperation_name[:255],
             project=self.project,
             org_worker=self.user,
-            voluntary=self.user2,
-            start_date=datetime.now()
+            voluntary=self.user2
         )
 
         self.assertEqual(str(cooperation), cooperation.name)

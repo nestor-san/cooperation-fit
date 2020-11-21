@@ -108,7 +108,7 @@ class Cooperation(models.Model):
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE)
-    org_worker = models.ForeignKey(
+    org_staff = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
@@ -122,7 +122,7 @@ class Cooperation(models.Model):
         )
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField(null=True)
-    is_private = models.BooleanField(default=True)
+    is_private = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

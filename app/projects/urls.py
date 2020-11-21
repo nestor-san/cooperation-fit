@@ -9,6 +9,7 @@ router.register('organization', views.OrganizationViewSet)
 router.register('cooperators', views.CooperatorProfileViewSet)
 router.register('projects', views.ProjectViewSet)
 router.register('portfolio', views.PortfolioItemViewSet)
+router.register('cooperation', views.CooperationViewSet)
 
 app_name = 'projects'
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from core.models import Organization, CooperatorProfile, Project, \
-    PortfolioItem
+    PortfolioItem, Cooperation
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -39,3 +39,13 @@ class PortfolioItemSerializer(serializers.ModelSerializer):
         model = PortfolioItem
         fields = ('id', 'user', 'name', 'description', 'link')
         ready_only_fields = ('id',)
+
+
+class CooperationSerializer(serializers.ModelSerializer):
+    """Serialize a Cooperation"""
+
+    class Meta:
+        model = Cooperation
+        fields = ('id', 'name', 'project', 'org_staff', 'voluntary',
+                  'start_date', 'end_date', 'is_private')
+        read_only_fields = ('id',)
