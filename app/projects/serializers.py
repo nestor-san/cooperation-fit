@@ -58,4 +58,4 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'name', 'cooperation', 'reviewer', 'reviewed',
                   'review', 'comment')
-        read_only_fields = ('id', 'cooperation')
+        read_only_fields = ('id',)

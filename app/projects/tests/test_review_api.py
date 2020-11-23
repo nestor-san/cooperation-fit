@@ -71,3 +71,68 @@ class PublicReviewApiTests(TestCase):
         serializer = ReviewSerializer(reviews_items, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+
+class PrivateReviewApiTests(TestCase):
+    """Test the Review API for authenticated users"""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            'test@xemob.com',
+            'testpass'
+        )
+        self.client.force_authenticate(self.user)
+        self.user2 = get_user_model().objects.create_user(
+            'other@xemob.com',
+            'testpass'
+        )
+
+    def test_create_review_successful(self):
+        """Test create a review with valid payload"""
+        sample_org = Organization.objects.create(user=self.user,
+                                                 name='Sample ngo',
+                                                 country='spain')
+        sample_project = Project.objects.create(user=self.user,
+                                                organization=sample_org,
+                                                name='Sample Project')
+        sample_cooperation = Cooperation.objects.create(
+            name='Sample cooperation',
+            project=sample_project)
+
+        payload = {'name': 'This is a sample review',
+                   'cooperation': sample_cooperation.id,
+                   'reviewer': self.user.id,
+                   'reviewed': self.user2.id,
+                   'review': 'This is a sample review body'
+                   }
+        self.client.post(REVIEW_URL, payload)
+
+        exists = Review.objects.filter(
+             reviewer=self.user,
+             name=payload['name']
+        ).exists()
+
+        self.assertTrue(exists)
+
+    def test_create_review_invalid(self):
+        """Test creating reviwe with invalid payload fails"""
+        sample_org = Organization.objects.create(user=self.user,
+                                                 name='Sample ngo',
+                                                 country='spain')
+        sample_project = Project.objects.create(user=self.user,
+                                                organization=sample_org,
+                                                name='Sample Project')
+        sample_cooperation = Cooperation.objects.create(
+            name='Sample cooperation',
+            project=sample_project)
+
+        payload = {'name': '',
+                   'cooperation': sample_cooperation,
+                   'reviewer': self.user,
+                   'reviewed': self.user2,
+                   'review': ''
+                   }
+        res = self.client.post(REVIEW_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

@@ -75,8 +75,14 @@ class CooperationViewSet(viewsets.GenericViewSet,
         return self.queryset.filter(is_private=False).order_by('-id')
 
 
-class ReviewViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class ReviewViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.CreateModelMixin):
     """Manage Reviews in the database"""
     authentication_classes = (TokenAuthentication,)
     queryset = Review.objects.all().order_by('-id')
     serializer_class = serializers.ReviewSerializer
+
+    def perform_create(self, serializer):
+        """Create a new Portfolio Item"""
+        serializer.save(reviewer=self.request.user)
