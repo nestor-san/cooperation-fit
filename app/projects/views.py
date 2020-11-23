@@ -1,6 +1,6 @@
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+#from rest_framework.permissions import IsAuthenticated
 
 from core.models import Organization, CooperatorProfile, Project, \
     PortfolioItem, Cooperation, Review
@@ -8,13 +8,17 @@ from core.models import Organization, CooperatorProfile, Project, \
 from projects import serializers
 
 
-class OrganizationViewSet(viewsets.GenericViewSet,
-                          mixins.ListModelMixin,
-                          mixins.CreateModelMixin):
+class BaseProjectsAttrViewSet(viewsets.GenericViewSet,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin):
+    """Base vieset for projects attributes"""
+    authentication_classes = (TokenAuthentication,)
+
+
+class OrganizationViewSet(BaseProjectsAttrViewSet):
 
     """Manage Organizations in the database"""
     queryset = Organization.objects.all().order_by('-id')
-    authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.OrganizationSerializer
 
     def perform_create(self, serializer):
@@ -22,12 +26,8 @@ class OrganizationViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class CooperatorProfileViewSet(viewsets.GenericViewSet,
-                               mixins.ListModelMixin,
-                               mixins.CreateModelMixin):
+class CooperatorProfileViewSet(BaseProjectsAttrViewSet):
     """Manage Cooperators in the database"""
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
     queryset = CooperatorProfile.objects.all().order_by('-name')
     serializer_class = serializers.CooperatorProfileSerializer
 
@@ -36,11 +36,8 @@ class CooperatorProfileViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class ProjectViewSet(viewsets.GenericViewSet,
-                     mixins.ListModelMixin,
-                     mixins.CreateModelMixin):
+class ProjectViewSet(BaseProjectsAttrViewSet):
     """Manage Projects in the database"""
-    authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.ProjectSerializer
     queryset = Project.objects.all().order_by('-id')
 
@@ -49,11 +46,8 @@ class ProjectViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class PortfolioItemViewSet(viewsets.GenericViewSet,
-                           mixins.ListModelMixin,
-                           mixins.CreateModelMixin):
+class PortfolioItemViewSet(BaseProjectsAttrViewSet):
     """Manage Portfolio Items in the database"""
-    authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.PortfolioItemSerializer
     queryset = PortfolioItem.objects.all().order_by('-name')
 
@@ -62,11 +56,8 @@ class PortfolioItemViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class CooperationViewSet(viewsets.GenericViewSet,
-                         mixins.ListModelMixin,
-                         mixins.CreateModelMixin):
+class CooperationViewSet(BaseProjectsAttrViewSet):
     """Manage cooperations in the database"""
-    authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.CooperationSerializer
     queryset = Cooperation.objects.all()
 
@@ -75,11 +66,8 @@ class CooperationViewSet(viewsets.GenericViewSet,
         return self.queryset.filter(is_private=False).order_by('-id')
 
 
-class ReviewViewSet(viewsets.GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
+class ReviewViewSet(BaseProjectsAttrViewSet):
     """Manage Reviews in the database"""
-    authentication_classes = (TokenAuthentication,)
     queryset = Review.objects.all().order_by('-id')
     serializer_class = serializers.ReviewSerializer
 

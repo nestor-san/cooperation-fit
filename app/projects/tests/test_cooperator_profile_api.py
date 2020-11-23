@@ -19,11 +19,11 @@ class PublicCooperatorApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_login_required(self):
+    def test_login_not_required(self):
         """Test that login is required to access the endpoint"""
         res = self.client.get(COOPERATOR_PROFILE_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
 
 class PrivateCooperatorApiTests(TestCase):
