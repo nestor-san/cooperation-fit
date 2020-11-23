@@ -83,3 +83,46 @@ class PublicCooperationApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotIn('Private cooperation', res.data)
         self.assertEqual(len(res.data), 1)
+
+
+class PrivateCooperationApiTests(TestCase):
+    """Test the cooperation api for authenticated users"""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            'test@xemob.com',
+            'testpass'
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_cooperation_successful(self):
+        """Test create a new cooperation with valid payload"""
+        sample_org = Organization.objects.create(user=self.user,
+                                                 name='Sample ngo',
+                                                 country='spain')
+        sample_project = Project.objects.create(user=self.user,
+                                                organization=sample_org,
+                                                name='Sample Project')
+
+        payload = {'name': 'Cooperation sample',
+                   'project': sample_project.id}
+
+        self.client.post(COOPERATION_URL, payload)
+
+        exists = Cooperation.objects.filter(name=payload['name']).exists()
+
+        self.assertTrue(exists)
+
+    def test_create_cooperation_invalid(self):
+        """Test creating invalid Cooperation fails"""
+        sample_org = Organization.objects.create(user=self.user,
+                                                 name='sample ngo',
+                                                 country='spain')
+        sample_project = Project.objects.create(user=self.user,
+                                                organization=sample_org,
+                                                name='Sample Project')
+        payload = {'name': '', 'project': sample_project}
+        res = self.client.post(COOPERATION_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

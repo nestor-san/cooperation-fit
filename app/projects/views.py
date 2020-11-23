@@ -3,7 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Organization, CooperatorProfile, Project, \
-    PortfolioItem, Cooperation
+    PortfolioItem, Cooperation, Review
 
 from projects import serializers
 
@@ -62,12 +62,21 @@ class PortfolioItemViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class CooperationViewSet(viewsets.ModelViewSet):
+class CooperationViewSet(viewsets.GenericViewSet,
+                         mixins.ListModelMixin,
+                         mixins.CreateModelMixin):
     """Manage cooperations in the database"""
+    authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.CooperationSerializer
     queryset = Cooperation.objects.all()
-    authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
         """Retrieve the cooperations which aren't private"""
         return self.queryset.filter(is_private=False).order_by('-id')
+
+
+class ReviewViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+    """Manage Reviews in the database"""
+    authentication_classes = (TokenAuthentication,)
+    queryset = Review.objects.all().order_by('-id')
+    serializer_class = serializers.ReviewSerializer

@@ -108,8 +108,39 @@ class ModelTests(TestCase):
         cooperation = models.Cooperation.objects.create(
             name=self.cooperation_name[:255],
             project=self.project,
-            org_worker=self.user,
+            org_staff=self.user,
             voluntary=self.user2
         )
 
         self.assertEqual(str(cooperation), cooperation.name)
+
+    def test_review_str(self):
+        """Test the reveiw string representation"""
+        self.user = sample_user()
+        self.user2 = sample_user(email='other@xemob.com')
+        self.organization = models.Organization.objects.create(
+            user=self.user, name='Sample Ngo', country='Spain')
+        self.project = models.Project.objects.create(
+            user=self.user,
+            name='Test project',
+            organization=self.organization,
+            description='Project description'
+        )
+        self.cooperation_name = f"""
+        Cooperation between {self.user.name} and {self.user2.name},
+        for the project {self.project.name}"""
+        self.cooperation = models.Cooperation.objects.create(
+            name=self.cooperation_name[:255],
+            project=self.project,
+            org_staff=self.user,
+            voluntary=self.user2
+        )
+        review = models.Review.objects.create(
+            name='Title of sample review',
+            cooperation=self.cooperation,
+            reviewer=self.user,
+            reviewed=self.user2,
+            review='This is a sample review'
+        )
+
+        self.assertEqual(str(review), review.name)

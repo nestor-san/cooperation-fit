@@ -112,7 +112,7 @@ class Cooperation(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='org_worker'
+        related_name='org_staff'
         )
     voluntary = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -123,6 +123,31 @@ class Cooperation(models.Model):
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField(null=True)
     is_private = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Review(models.Model):
+    """A review of a cooperation"""
+    name = models.CharField(max_length=255)
+    cooperation = models.ForeignKey(
+        Cooperation,
+        on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='reviewer'
+        )
+    reviewed = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='reviewed'
+        )
+    review = models.TextField()
+    comment = models.TextField(blank=True)
 
     def __str__(self):
         return self.name

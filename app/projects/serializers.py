@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from core.models import Organization, CooperatorProfile, Project, \
-    PortfolioItem, Cooperation
+    PortfolioItem, Cooperation, Review
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -49,3 +49,13 @@ class CooperationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'project', 'org_staff', 'voluntary',
                   'start_date', 'end_date', 'is_private')
         read_only_fields = ('id',)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    """Serialize a review"""
+
+    class Meta:
+        model = Review
+        fields = ('id', 'name', 'cooperation', 'reviewer', 'reviewed',
+                  'review', 'comment')
+        read_only_fields = ('id', 'cooperation')
