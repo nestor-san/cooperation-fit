@@ -42,11 +42,11 @@ class PublicCooperationApiTests(TestCase):
                                                 name='Sample Project')
         Cooperation.objects.create(name='Sample cooperation',
                                    project=sample_project,
-                                   org_staff=sample_user,
+                                   user=sample_user,
                                    voluntary=sample_user2)
         Cooperation.objects.create(name='Sample cooperation 2',
                                    project=sample_project,
-                                   org_staff=sample_user,
+                                   user=sample_user,
                                    voluntary=sample_user2)
         res = self.client.get(COOPERATION_URL)
 
@@ -71,12 +71,12 @@ class PublicCooperationApiTests(TestCase):
                                                 name='Sample Project')
         Cooperation.objects.create(name='Private cooperation',
                                    project=sample_project,
-                                   org_staff=sample_user,
+                                   user=sample_user,
                                    voluntary=sample_user2,
                                    is_private=True)
         Cooperation.objects.create(name='Public cooperation 2',
                                    project=sample_project,
-                                   org_staff=sample_user,
+                                   user=sample_user,
                                    voluntary=sample_user2)
         res = self.client.get(COOPERATION_URL)
 

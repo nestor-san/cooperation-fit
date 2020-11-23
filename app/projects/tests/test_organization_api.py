@@ -13,6 +13,11 @@ from projects.serializers import OrganizationSerializer
 ORGANIZATION_URL = reverse('projects:organization-list')
 
 
+def detail_url(organization_id):
+    """Return the detail URL of an organization"""
+    return reverse('projects:organization-detail', args=[organization_id])
+
+
 class PublicOrganizationApiTests(TestCase):
     """Test the publicly available organization API"""
 
@@ -69,3 +74,44 @@ class PrivateOrganizationApiTests(TestCase):
         res = self.client.post(ORGANIZATION_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_partial_update_organization_successful(self):
+        """Test updating a new organization"""
+        org = Organization.objects.create(name='Test NGO',
+                                          country='Spain',
+                                          user=self.user)
+        payload = {'name': 'NGO altered'}
+        url = detail_url(org.id)
+        self.client.patch(url, payload)
+
+        org.refresh_from_db()
+        self.assertEqual(org.name, payload['name'])
+
+    def test_full_update_organization_successful(self):
+        """Test updating a organization with PUT"""
+        org = Organization.objects.create(name='Test NGO',
+                                          country='Spain',
+                                          user=self.user)
+        payload = {'name': 'Ngo altered PUT', 'country': 'Wonderland'}
+        url = detail_url(org.id)
+        self.client.put(url, payload)
+
+        org.refresh_from_db()
+        self.assertEqual(org.name, payload['name'])
+        self.assertEqual(org.country, payload['country'])
+
+    # def test_partial_update_for_not_owner_invalid(self):
+    #     """Test updating an organization for a not owner return error"""
+    #     user2 = get_user_model().objects.create_user('other@xemob.com',
+    #                                                  'password123')
+    #     org = Organization.objects.create(name='Test NGO',
+    #                                       country='Spain',
+    #                                       user=user2)
+    #     payload = {'name': 'Ngo altered PUT', 'country': 'Wonderland'}
+    #     url = detail_url(org.id)
+    #     res = self.client.put(url, payload)
+
+    #     org.refresh_from_db()
+    #     self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+    #     self.assertNotEqual(org.name, payload['name'])
+    #     self.assertNotEqual(org.country, payload['country'])

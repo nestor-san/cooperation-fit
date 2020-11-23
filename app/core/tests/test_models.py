@@ -108,7 +108,7 @@ class ModelTests(TestCase):
         cooperation = models.Cooperation.objects.create(
             name=self.cooperation_name[:255],
             project=self.project,
-            org_staff=self.user,
+            user=self.user,
             voluntary=self.user2
         )
 
@@ -132,7 +132,7 @@ class ModelTests(TestCase):
         self.cooperation = models.Cooperation.objects.create(
             name=self.cooperation_name[:255],
             project=self.project,
-            org_staff=self.user,
+            user=self.user,
             voluntary=self.user2
         )
         review = models.Review.objects.create(

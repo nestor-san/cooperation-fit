@@ -46,7 +46,7 @@ class CooperationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cooperation
-        fields = ('id', 'name', 'project', 'org_staff', 'voluntary',
+        fields = ('id', 'name', 'project', 'user', 'voluntary',
                   'start_date', 'end_date', 'is_private')
         read_only_fields = ('id',)
 

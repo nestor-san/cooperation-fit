@@ -108,11 +108,11 @@ class Cooperation(models.Model):
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE)
-    org_staff = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='org_staff'
+        related_name='user'
         )
     voluntary = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -39,7 +39,7 @@ class PublicReviewApiTests(TestCase):
         self.cooperation = Cooperation.objects.create(
             name=self.cooperation_name[:255],
             project=self.project,
-            org_staff=self.user,
+            user=self.user,
             voluntary=self.user2
         )
 
