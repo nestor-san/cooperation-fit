@@ -81,3 +81,25 @@ class PrivateMessagesApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotIn('Hey man!', res.data)
         self.assertNotIn('Hey woman!', res.data)
+
+    def test_create_a_message_successful(self):
+        """Test create a message by an authenticated user"""
+        message = 'Are you as supercool as me?'
+        payload = {'user': self.user.id, 'recipient': self.user2.id,
+                   'message': message}
+        self.client.post(MESSAGES_URL, payload)
+
+        exists = Message.objects.filter(
+            user=self.user,
+            message=payload['message']
+        ).exists()
+        self.assertTrue(exists)
+
+    def test_create_a_message_invalid(self):
+        """Test create a messge with invalid payload fails"""
+        message = ''
+        payload = {'user': self.user.id, 'recipient': self.user2.id,
+                   'message': message}
+        res = self.client.post(MESSAGES_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

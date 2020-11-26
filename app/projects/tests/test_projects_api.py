@@ -62,6 +62,11 @@ class PrivateProjectsApiTests(TestCase):
         self.ngo = Organization.objects.create(user=self.user,
                                                name='NGO-1',
                                                country='Spain')
+        self.user2 = get_user_model().objects.create_user('other@xemob.com',
+                                                          'testpass')
+        self.ngo2 = Organization.objects.create(user=self.user2,
+                                                name='NGO-2',
+                                                country='Wonderland')
 
     def test_create_project_successful(self):
         """Test creating a new project"""
@@ -98,8 +103,6 @@ class PrivateProjectsApiTests(TestCase):
 
     def test_partial_update_by_not_owner_invalid(self):
         """Test updating a project by not owner return not authorized"""
-        self.user2 = get_user_model().objects.create_user('other@xemob.com',
-                                                          'testpass')
         project = Project.objects.create(user=self.user2,
                                          name='Project 1',
                                          organization=self.ngo)
@@ -129,17 +132,26 @@ class PrivateProjectsApiTests(TestCase):
 
     def test_full_update_by_not_owner_invalid(self):
         """Test updating a project by not owner return not authorized"""
-        self.user2 = get_user_model().objects.create_user('other@xemob.com',
-                                                          'testpass')
+
         project = Project.objects.create(user=self.user2,
                                          name='Project 1',
                                          organization=self.ngo)
-        payload = {'user': self.user,
+        payload = {'user': self.user.id,
                    'name': 'Updated project',
-                   'organiztion': self.ngo}
+                   'organiztion': self.ngo.id}
         url = detail_url(project.id)
         res = self.client.put(url, payload)
 
         project.refresh_from_db()
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
         self.assertNotEqual(project.name, payload['name'])
+
+    def test_create_project_with_not_owned_organization_invalid(self):
+        """Test that user should be owner of the organization related with
+        the project. Otherwise, it raise an error"""
+        payload = {'user': self.user.id,
+                   'name': 'Rapped Organization',
+                   'organization': self.ngo2.id}
+        res = self.client.post(PROJECT_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

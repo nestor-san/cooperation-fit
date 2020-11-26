@@ -18,7 +18,8 @@ class BaseProjectsAttrViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """Create a new Portfolio Item"""
-        serializer.save(user=self.request.user)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
 
 
 class OrganizationViewSet(BaseProjectsAttrViewSet):

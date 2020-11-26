@@ -70,6 +70,13 @@ class PrivatePortfolioApiTests(TestCase):
         ).exists()
         self.assertTrue(exists)
 
+    def test_create_portfolio_item_invalid(self):
+        """Test creating a portfolio item with invalid payload"""
+        payload = {'name': '', 'user': self.user.id}
+        res = self.client.post(PORTFOLIO_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_partial_portfolio_update_successfully(self):
         """Test partial updating a project by owner is successful"""
         portfolio_item = PortfolioItem.objects.create(user=self.user,

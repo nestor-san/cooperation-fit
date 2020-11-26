@@ -3,6 +3,8 @@ from rest_framework import serializers
 from core.models import Organization, CooperatorProfile, Project, \
     PortfolioItem, Cooperation, Review, Message
 
+from .validators import ProjectValidator, CooperationValidator
+
 
 class OrganizationSerializer(serializers.ModelSerializer):
     """Serializser for organization objects"""
@@ -30,6 +32,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'user', 'organization',
                   'description', 'ref_link')
         read_only_fields = ('id',)
+        extra_kwargs = {
+            'organization': {'validators': [ProjectValidator('user')]}
+         }
 
 
 class PortfolioItemSerializer(serializers.ModelSerializer):
@@ -49,6 +54,9 @@ class CooperationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'project', 'user', 'voluntary',
                   'start_date', 'end_date', 'is_private')
         read_only_fields = ('id',)
+        extra_kwargs = {
+            'project': {'validators': [CooperationValidator('user')]}
+        }
 
 
 class ReviewSerializer(serializers.ModelSerializer):

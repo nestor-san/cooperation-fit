@@ -101,10 +101,21 @@ class PrivateCooperationApiTests(TestCase):
         self.project = Project.objects.create(user=self.user,
                                               organization=self.org,
                                               name='Sample Project')
+        self.user2 = get_user_model().objects.create_user(
+            'other@xemob.com',
+            'testpass'
+        )
+        self.org2 = Organization.objects.create(user=self.user2,
+                                                name='User 2 ngo',
+                                                country='Wonderland')
+        self.project2 = Project.objects.create(user=self.user2,
+                                               organization=self.org,
+                                               name='Sample Project')                                      
 
     def test_create_cooperation_successful(self):
         """Test create a new cooperation with valid payload"""
-        payload = {'name': 'Cooperation sample',
+        payload = {'user': self.user.id,
+                   'name': 'Cooperation sample',
                    'project': self.project.id}
 
         self.client.post(COOPERATION_URL, payload)
@@ -116,6 +127,16 @@ class PrivateCooperationApiTests(TestCase):
     def test_create_cooperation_invalid(self):
         """Test creating invalid Cooperation fails"""
         payload = {'name': '', 'project': self.project}
+        res = self.client.post(COOPERATION_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_a_cooperation_for_not_owned_project(self):
+        """Test that the user is the owner of the project related with
+        a coperation being created. If it's not the owner aise an error."""
+        payload = {'user': self.user.id,
+                   'name': 'Rapped Cooperation',
+                   'project': self.project2.id}
         res = self.client.post(COOPERATION_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

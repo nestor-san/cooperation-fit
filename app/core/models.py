@@ -166,7 +166,7 @@ class Message(models.Model):
         related_name='recipient'
         )
     message = models.TextField()
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.message
