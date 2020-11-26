@@ -11,6 +11,7 @@ router.register('projects', views.ProjectViewSet)
 router.register('portfolio', views.PortfolioItemViewSet)
 router.register('cooperation', views.CooperationViewSet)
 router.register('review', views.ReviewViewSet)
+router.register('message', views.MessageViewSet)
 
 app_name = 'projects'
 

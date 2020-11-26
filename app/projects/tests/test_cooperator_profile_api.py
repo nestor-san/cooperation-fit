@@ -13,6 +13,11 @@ from projects.serializers import CooperatorProfileSerializer
 COOPERATOR_PROFILE_URL = reverse('projects:cooperatorprofile-list')
 
 
+def detail_url(cooperator_id):
+    """Return the detail URL of a cooperator"""
+    return reverse('projects:cooperatorprofile-detail', args=[cooperator_id])
+
+
 class PublicCooperatorApiTests(TestCase):
     """Test the publicly available Cooperators API"""
 
@@ -79,3 +84,71 @@ class PrivateCooperatorApiTests(TestCase):
         res = self.client.post(COOPERATOR_PROFILE_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_partial_update_cooperator_successful(self):
+        """Test partial update of cooperator by owner is successful"""
+        cooperator = CooperatorProfile.objects.create(user=self.user,
+                                                      name='Nestor',
+                                                      description="""
+                                            I\'m a super web designer.""")
+        payload = {'name': 'dumb'}
+        url = detail_url(cooperator.user.id)
+        res = self.client.patch(url, payload)
+
+        cooperator.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(cooperator.name, payload['name'])
+
+    def test_partial_update_by_not_owner_invalid(self):
+        """Test updating an item by not owner return not authorized"""
+        self.user2 = get_user_model().objects.create_user(
+            'other@xemob.com',
+            'testpass'
+        )
+        cooperator = CooperatorProfile.objects.create(user=self.user2,
+                                                      name='Nestor',
+                                                      description="""
+                                        I\'m a super web designer.""")
+        payload = {'name': 'dumb'}
+        url = detail_url(cooperator.user.id)
+        res = self.client.patch(url, payload)
+
+        cooperator.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotEqual(cooperator.name, payload['name'])
+
+    def test_full_update_cooperator_successful(self):
+        """Test partial update of cooperator by owner is successful"""
+        cooperator = CooperatorProfile.objects.create(user=self.user,
+                                                      name='Nestor',
+                                                      description="""
+                                            I\'m a super web designer.""")
+        payload = {'user': self.user.id,
+                   'name': 'dumb',
+                   'description': 'dumbass'}
+        url = detail_url(cooperator.user.id)
+        res = self.client.put(url, payload)
+
+        cooperator.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(cooperator.name, payload['name'])
+        self.assertEqual(cooperator.description, payload['description'])
+
+    def test_full_update_by_not_owner_invalid(self):
+        """Test updating an item by not owner return not authorized"""
+        self.user2 = get_user_model().objects.create_user(
+            'other@xemob.com',
+            'testpass'
+        )
+        cooperator = CooperatorProfile.objects.create(user=self.user2,
+                                                      name='Nestor',
+                                                      description="""
+                                        I\'m a super web designer.""")
+        payload = {'name': 'dumb', 'description': 'dumbass'}
+        url = detail_url(cooperator.user.id)
+        res = self.client.put(url, payload)
+
+        cooperator.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotEqual(cooperator.name, payload['name'])
+        self.assertNotEqual(cooperator.name, payload['description'])

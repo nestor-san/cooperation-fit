@@ -1,9 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
+    IsAuthenticated
+from django.db.models import Q
+from .permissions import IsOwnerOrReadOnly
 
 from core.models import Organization, CooperatorProfile, Project, \
-    PortfolioItem, Cooperation, Review
+    PortfolioItem, Cooperation, Review, Message
 
 from projects import serializers
 
@@ -11,7 +14,7 @@ from projects import serializers
 class BaseProjectsAttrViewSet(viewsets.ModelViewSet):
     """Base vieset for projects attributes"""
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
         """Create a new Portfolio Item"""
@@ -61,3 +64,16 @@ class ReviewViewSet(BaseProjectsAttrViewSet):
     def perform_create(self, serializer):
         """Create a new Portfolio Item"""
         serializer.save(reviewer=self.request.user)
+
+
+class MessageViewSet(BaseProjectsAttrViewSet):
+    """Manage messages in the database"""
+    permission_classes = (IsAuthenticated,)
+    queryset = Message.objects.all().order_by('-date')
+    serializer_class = serializers.MessageSerializer
+
+    def get_queryset(self):
+        """Retrieve the messages where the user is involved"""
+        return self.queryset.filter(
+            Q(user=self.request.user) | Q(recipient=self.request.user)
+        ).order_by('-date')

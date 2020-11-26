@@ -13,6 +13,11 @@ from projects.serializers import PortfolioItemSerializer
 PORTFOLIO_URL = reverse('projects:portfolioitem-list')
 
 
+def detail_url(portfolio_id):
+    """Return the detail URL of a portfolio item"""
+    return reverse('projects:portfolioitem-detail', args=[portfolio_id])
+
+
 class PublicPortfolioApiTests(TestCase):
     """Test the publicly available projects API"""
 
@@ -64,3 +69,59 @@ class PrivatePortfolioApiTests(TestCase):
             name=payload['name']
         ).exists()
         self.assertTrue(exists)
+
+    def test_partial_portfolio_update_successfully(self):
+        """Test partial updating a project by owner is successful"""
+        portfolio_item = PortfolioItem.objects.create(user=self.user,
+                                                      name='Portfolio Item 1')
+        payload = {'name': 'Alt portfolio item'}
+        url = detail_url(portfolio_item.id)
+        res = self.client.patch(url, payload)
+
+        portfolio_item.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(portfolio_item.name, payload['name'])
+
+    def test_partial_portfolio_update_invalid(self):
+        """Test updating a portfolio item by not owner is invalid"""
+        self.user2 = get_user_model().objects.create_user(
+            'other@xemob.com',
+            'testpass'
+        )
+        portfolio_item = PortfolioItem.objects.create(user=self.user2,
+                                                      name='Portfolio Item 1')
+        payload = {'name': 'Alt portfolio item'}
+        url = detail_url(portfolio_item.id)
+        res = self.client.patch(url, payload)
+
+        portfolio_item.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotEqual(portfolio_item.name, payload['name'])
+
+    def test_full_portfolio_update_successful(self):
+        """Test updating a portfolio item by owner is successful with PUT"""
+        portfolio_item = PortfolioItem.objects.create(user=self.user,
+                                                      name='Portfolio Item 1')
+        payload = {'user': self.user.id, 'name': 'Alt portfolio item'}
+        url = detail_url(portfolio_item.id)
+        res = self.client.put(url, payload)
+
+        portfolio_item.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(portfolio_item.name, payload['name'])
+
+    def test_full_portfolio_update_invalid(self):
+        """Test updateing a portfolio item by not owner is invalid with PUT"""
+        self.user2 = get_user_model().objects.create_user(
+            'other@xemob.com',
+            'testpass'
+        )
+        portfolio_item = PortfolioItem.objects.create(user=self.user2,
+                                                      name='Portfolio Item 1')
+        payload = {'user': self.user.id, 'name': 'Alt portfolio item'}
+        url = detail_url(portfolio_item.id)
+        res = self.client.put(url, payload)
+
+        portfolio_item.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotEqual(portfolio_item.name, payload['name'])

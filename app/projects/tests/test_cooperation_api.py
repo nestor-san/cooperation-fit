@@ -95,18 +95,17 @@ class PrivateCooperationApiTests(TestCase):
             'testpass'
         )
         self.client.force_authenticate(self.user)
+        self.org = Organization.objects.create(user=self.user,
+                                               name='Sample ngo',
+                                               country='spain')
+        self.project = Project.objects.create(user=self.user,
+                                              organization=self.org,
+                                              name='Sample Project')
 
     def test_create_cooperation_successful(self):
         """Test create a new cooperation with valid payload"""
-        sample_org = Organization.objects.create(user=self.user,
-                                                 name='Sample ngo',
-                                                 country='spain')
-        sample_project = Project.objects.create(user=self.user,
-                                                organization=sample_org,
-                                                name='Sample Project')
-
         payload = {'name': 'Cooperation sample',
-                   'project': sample_project.id}
+                   'project': self.project.id}
 
         self.client.post(COOPERATION_URL, payload)
 
@@ -116,13 +115,7 @@ class PrivateCooperationApiTests(TestCase):
 
     def test_create_cooperation_invalid(self):
         """Test creating invalid Cooperation fails"""
-        sample_org = Organization.objects.create(user=self.user,
-                                                 name='sample ngo',
-                                                 country='spain')
-        sample_project = Project.objects.create(user=self.user,
-                                                organization=sample_org,
-                                                name='Sample Project')
-        payload = {'name': '', 'project': sample_project}
+        payload = {'name': '', 'project': self.project}
         res = self.client.post(COOPERATION_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

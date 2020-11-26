@@ -151,3 +151,22 @@ class Review(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Message(models.Model):
+    """A message between users"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='sender'
+        )
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='recipient'
+        )
+    message = models.TextField()
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.message

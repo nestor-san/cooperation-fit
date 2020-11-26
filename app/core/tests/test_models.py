@@ -144,3 +144,15 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(review), review.name)
+
+    def test_message_string(self):
+        """Test the message string representation"""
+        self.user = sample_user()
+        self.user2 = sample_user(email='other@xemob.com')
+        message = 'Hello man!'
+        message = models.Message.objects.create(
+            user=self.user,
+            recipient=self.user2,
+            message=message)
+
+        self.assertEqual(str(message), message.message)

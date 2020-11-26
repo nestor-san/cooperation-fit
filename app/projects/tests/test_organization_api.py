@@ -100,18 +100,33 @@ class PrivateOrganizationApiTests(TestCase):
         self.assertEqual(org.name, payload['name'])
         self.assertEqual(org.country, payload['country'])
 
-    # def test_partial_update_for_not_owner_invalid(self):
-    #     """Test updating an organization for a not owner return error"""
-    #     user2 = get_user_model().objects.create_user('other@xemob.com',
-    #                                                  'password123')
-    #     org = Organization.objects.create(name='Test NGO',
-    #                                       country='Spain',
-    #                                       user=user2)
-    #     payload = {'name': 'Ngo altered PUT', 'country': 'Wonderland'}
-    #     url = detail_url(org.id)
-    #     res = self.client.put(url, payload)
+    def test_partial_update_organization_invalid(self):
+        """Test updating a organization with PUT"""
+        user2 = get_user_model().objects.create_user('other@xemob.com',
+                                                     'password123')
+        org = Organization.objects.create(name='Test NGO',
+                                          country='Spain',
+                                          user=user2)
+        payload = {'name': 'Ngo altered PUT'}
+        url = detail_url(org.id)
+        res = self.client.patch(url, payload)
 
-    #     org.refresh_from_db()
-    #     self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-    #     self.assertNotEqual(org.name, payload['name'])
-    #     self.assertNotEqual(org.country, payload['country'])
+        org.refresh_from_db()
+        self.assertNotEqual(org.name, payload['name'])
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_partial_update_for_not_owner_invalid(self):
+        """Test updating an organization for a not owner return error"""
+        user2 = get_user_model().objects.create_user('other@xemob.com',
+                                                     'password123')
+        org = Organization.objects.create(name='Test NGO',
+                                          country='Spain',
+                                          user=user2)
+        payload = {'name': 'Ngo altered PUT', 'country': 'Wonderland'}
+        url = detail_url(org.id)
+        res = self.client.put(url, payload)
+
+        org.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotEqual(org.name, payload['name'])
+        self.assertNotEqual(org.country, payload['country'])

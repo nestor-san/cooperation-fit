@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from core.models import Organization, CooperatorProfile, Project, \
-    PortfolioItem, Cooperation, Review
+    PortfolioItem, Cooperation, Review, Message
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -10,7 +10,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = ('id', 'name', 'description', 'website', 'address', 'country')
-        ready_only_fields = ('id',)
+        read_only_fields = ('id',)
 
 
 class CooperatorProfileSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class CooperatorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CooperatorProfile
         fields = ('user', 'name', 'description', 'skills', 'website')
-        ready_only_fields = ('user',)
+        read_only_fields = ('user',)
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ('id', 'name', 'user', 'organization',
                   'description', 'ref_link')
-        ready_only_fields = ('id', 'user', 'organization')
+        read_only_fields = ('id',)
 
 
 class PortfolioItemSerializer(serializers.ModelSerializer):
@@ -38,7 +38,7 @@ class PortfolioItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = PortfolioItem
         fields = ('id', 'user', 'name', 'description', 'link')
-        ready_only_fields = ('id',)
+        read_only_fields = ('id',)
 
 
 class CooperationSerializer(serializers.ModelSerializer):
@@ -58,4 +58,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'name', 'cooperation', 'reviewer', 'reviewed',
                   'review', 'comment')
+        read_only_fields = ('id',)
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    """Serialize a message"""
+
+    class Meta:
+        model = Message
+        fields = ('id', 'user', 'recipient', 'message', 'date')
         read_only_fields = ('id',)
