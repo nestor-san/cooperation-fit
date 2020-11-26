@@ -110,7 +110,7 @@ class PrivateCooperationApiTests(TestCase):
                                                 country='Wonderland')
         self.project2 = Project.objects.create(user=self.user2,
                                                organization=self.org,
-                                               name='Sample Project')                                      
+                                               name='Sample Project')                                  
 
     def test_create_cooperation_successful(self):
         """Test create a new cooperation with valid payload"""

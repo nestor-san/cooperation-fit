@@ -134,7 +134,7 @@ class Review(models.Model):
     cooperation = models.ForeignKey(
         Cooperation,
         on_delete=models.CASCADE)
-    reviewer = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,

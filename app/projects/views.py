@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.serializers import ValidationError
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
     IsAuthenticated
@@ -56,15 +57,20 @@ class CooperationViewSet(BaseProjectsAttrViewSet):
         """Retrieve the cooperations which aren't private"""
         return self.queryset.filter(is_private=False).order_by('-id')
 
+    def validate_user(self, value):
+        """Validate that the user in the request field user is the same
+        who makes the POST request"""
+        if value != self.request.user.id:
+            raise ValidationError("""You'0re trying to edit objects from
+        another user. You only can edit your own objects. Please, login
+        and try again""")
+        return value
+
 
 class ReviewViewSet(BaseProjectsAttrViewSet):
     """Manage Reviews in the database"""
     queryset = Review.objects.all().order_by('-id')
     serializer_class = serializers.ReviewSerializer
-
-    def perform_create(self, serializer):
-        """Create a new Portfolio Item"""
-        serializer.save(reviewer=self.request.user)
 
 
 class MessageViewSet(BaseProjectsAttrViewSet):

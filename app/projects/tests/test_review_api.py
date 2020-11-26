@@ -49,19 +49,19 @@ class PublicReviewApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-    def test_retrieve_cooperation_list(self):
+    def test_retrieve_reviews_list(self):
         """Test retrieving a list of reviews items"""
         Review.objects.create(
             name='Title of sample review',
             cooperation=self.cooperation,
-            reviewer=self.user,
+            user=self.user,
             reviewed=self.user2,
             review='This is a sample review'
         )
         Review.objects.create(
             name='Title of sample review 2',
             cooperation=self.cooperation,
-            reviewer=self.user2,
+            user=self.user2,
             reviewed=self.user,
             review='This is a sample review 2'
         )
@@ -102,21 +102,21 @@ class PrivateReviewApiTests(TestCase):
 
         payload = {'name': 'This is a sample review',
                    'cooperation': sample_cooperation.id,
-                   'reviewer': self.user.id,
+                   'user': self.user.id,
                    'reviewed': self.user2.id,
                    'review': 'This is a sample review body'
                    }
         self.client.post(REVIEW_URL, payload)
 
         exists = Review.objects.filter(
-             reviewer=self.user,
+             user=self.user,
              name=payload['name']
         ).exists()
 
         self.assertTrue(exists)
 
     def test_create_review_invalid(self):
-        """Test creating reviwe with invalid payload fails"""
+        """Test creating review with invalid payload fails"""
         sample_org = Organization.objects.create(user=self.user,
                                                  name='Sample ngo',
                                                  country='spain')
@@ -129,7 +129,7 @@ class PrivateReviewApiTests(TestCase):
 
         payload = {'name': '',
                    'cooperation': sample_cooperation,
-                   'reviewer': self.user,
+                   'user': self.user,
                    'reviewed': self.user2,
                    'review': ''
                    }

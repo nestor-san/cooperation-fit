@@ -138,7 +138,7 @@ class ModelTests(TestCase):
         review = models.Review.objects.create(
             name='Title of sample review',
             cooperation=self.cooperation,
-            reviewer=self.user,
+            user=self.user,
             reviewed=self.user2,
             review='This is a sample review'
         )

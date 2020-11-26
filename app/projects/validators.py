@@ -38,7 +38,7 @@ class ProjectValidator(GenericValidator):
     of the organization"""
 
     def make_validation(self, organization, user):
-        message = 'The user ins\'t the owner of the organization'
+        message = 'The user isn\'t the owner of the organization'
         if organization.user.id != user.id:
             raise ValidationError(message)
 
@@ -52,15 +52,3 @@ class CooperationValidator(GenericValidator):
                      related with this project"""
         if project.user.id != user.id:
             raise ValidationError(message)
-
-
-# class UserValidator(GenericValidator):
-#     """Validates that the user that makes the request is the user which refers 
-#     the POST request"""
-
-#     message = """"You're trying to edit data of another user!
-#               Please, login with your credentials and try again"""
-#     def make_validation(self, user, project):
-#         if request.user.id != user.id:
-#             raise ValidationError(message)
-  
