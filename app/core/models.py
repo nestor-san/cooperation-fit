@@ -147,7 +147,6 @@ class Review(models.Model):
         related_name='reviewed'
         )
     review = models.TextField()
-    comment = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
