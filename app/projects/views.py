@@ -17,9 +17,20 @@ class BaseProjectsAttrViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
+    # def perform_create(self, serializer):
+    #     """Create a new Item from Models"""
+    #     if serializer.is_valid():
+    #         serializer.save(user=self.request.user)
+
     def perform_create(self, serializer):
-        """Create a new Portfolio Item"""
-        if serializer.is_valid():
+
+        if self.request.user.id != int(self.request.POST['user']):
+            message = """There is an error updating this user.
+                         Please, login and try again"""
+            raise ValidationError(message)
+
+        if serializer.is_valid() and self.request.user.id == int(
+                                     self.request.POST['user']):
             serializer.save(user=self.request.user)
 
 
@@ -56,15 +67,6 @@ class CooperationViewSet(BaseProjectsAttrViewSet):
     def get_queryset(self):
         """Retrieve the cooperations which aren't private"""
         return self.queryset.filter(is_private=False).order_by('-id')
-
-    def validate_user(self, value):
-        """Validate that the user in the request field user is the same
-        who makes the POST request"""
-        if value != self.request.user.id:
-            raise ValidationError("""You'0re trying to edit objects from
-        another user. You only can edit your own objects. Please, login
-        and try again""")
-        return value
 
 
 class ReviewViewSet(BaseProjectsAttrViewSet):

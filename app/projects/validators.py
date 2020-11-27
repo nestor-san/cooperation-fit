@@ -49,6 +49,6 @@ class CooperationValidator(GenericValidator):
 
     def make_validation(self, project, user):
         message = """The user ins\'t the owner of the organization
-                     related with this project"""
+            related with this project"""
         if project.user.id != user.id:
             raise ValidationError(message)

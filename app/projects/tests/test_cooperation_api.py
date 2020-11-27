@@ -110,7 +110,7 @@ class PrivateCooperationApiTests(TestCase):
                                                 country='Wonderland')
         self.project2 = Project.objects.create(user=self.user2,
                                                organization=self.org,
-                                               name='Sample Project')                                  
+                                               name='Sample Project')
 
     def test_create_cooperation_successful(self):
         """Test create a new cooperation with valid payload"""
@@ -135,6 +135,16 @@ class PrivateCooperationApiTests(TestCase):
         """Test that the user is the owner of the project related with
         a coperation being created. If it's not the owner aise an error."""
         payload = {'user': self.user.id,
+                   'name': 'Rapped Cooperation',
+                   'project': self.project2.id}
+        res = self.client.post(COOPERATION_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_a_cooperation_for_another_user_is_invalid(self):
+        """Check that a user can't create a cooperation posting on
+        behalf of another user"""
+        payload = {'user': self.user2.id,
                    'name': 'Rapped Cooperation',
                    'project': self.project2.id}
         res = self.client.post(COOPERATION_URL, payload)

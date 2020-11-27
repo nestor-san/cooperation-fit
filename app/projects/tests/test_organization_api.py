@@ -59,7 +59,7 @@ class PrivateOrganizationApiTests(TestCase):
 
     def test_create_organization_successful(self):
         """Test creating a new organization"""
-        payload = {'name': 'NGO', 'country': 'Spain'}
+        payload = {'name': 'NGO', 'country': 'Spain', 'user': self.user.id}
         self.client.post(ORGANIZATION_URL, payload)
 
         exists = Organization.objects.filter(
