@@ -155,3 +155,13 @@ class PrivateProjectsApiTests(TestCase):
         res = self.client.post(PROJECT_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_project_for_another_user_is_invalid(self):
+        """Test that a user can't create a project posting on
+        behalf of anther user"""
+        payload = {'user': self.user2.id,
+                   'name': 'Rapped Organization',
+                   'organization': self.ngo2.id}
+        res = self.client.post(PROJECT_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

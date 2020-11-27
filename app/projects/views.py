@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
     IsAuthenticated
 from django.db.models import Q
 from .permissions import IsOwnerOrReadOnly
+from django.utils.translation import ugettext_lazy as _
 
 from core.models import Organization, CooperatorProfile, Project, \
     PortfolioItem, Cooperation, Review, Message
@@ -25,8 +26,8 @@ class BaseProjectsAttrViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
 
         if self.request.user.id != int(self.request.POST['user']):
-            message = """There is an error updating this user.
-                         Please, login and try again"""
+            message = _("""There is an error updating this user.
+                         Please, login and try again""")
             raise ValidationError(message)
 
         if serializer.is_valid() and self.request.user.id == int(

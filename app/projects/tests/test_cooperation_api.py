@@ -142,7 +142,7 @@ class PrivateCooperationApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_a_cooperation_for_another_user_is_invalid(self):
-        """Check that a user can't create a cooperation posting on
+        """Test that a user can't create a cooperation posting on
         behalf of another user"""
         payload = {'user': self.user2.id,
                    'name': 'Rapped Cooperation',

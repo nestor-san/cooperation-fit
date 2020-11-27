@@ -1,4 +1,5 @@
 from rest_framework.serializers import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 
 class GenericValidator:
@@ -38,7 +39,7 @@ class ProjectValidator(GenericValidator):
     of the organization"""
 
     def make_validation(self, organization, user):
-        message = 'The user isn\'t the owner of the organization'
+        message = _('The user isn\'t the owner of the organization')
         if organization.user.id != user.id:
             raise ValidationError(message)
 
@@ -48,7 +49,7 @@ class CooperationValidator(GenericValidator):
     the organization"""
 
     def make_validation(self, project, user):
-        message = """The user ins\'t the owner of the organization
-            related with this project"""
+        message = _("""The user ins\'t the owner of the organization
+            related with this project""")
         if project.user.id != user.id:
             raise ValidationError(message)
